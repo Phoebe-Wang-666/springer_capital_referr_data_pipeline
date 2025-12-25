@@ -27,6 +27,15 @@ mask_referrer_deleted = df["referrer_is_deleted"] == True
 df.loc[mask_referrer_deleted & df["is_valid_referral"], "is_valid_referral"] = False
 df.loc[mask_referrer_deleted & df["is_valid_referral"], "invalid_reason"] = "referrer_deleted"
 
+# rule 4: transaction must occur after referral
+mask_invalid_time = (
+    df["transaction_at"].notna()
+    & df["referral_at"].notna()
+    & (df["transaction_at"] < df["referral_at"])
+)
+
+df.loc[mask_invalid_time, "is_valid_referral"] = False
+df.loc[mask_invalid_time, "invalid_reason"] = "transaction_before_referral"
 
 # reward eligibility
 mask_reward_eligible = (

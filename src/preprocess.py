@@ -8,6 +8,7 @@ downstream business logic.
 
 import pandas as pd
 from pathlib import Path
+import numpy as np
 
 DATA_DIR = Path("data")
 
@@ -129,6 +130,7 @@ referrals_df = referrals_df.merge(
 )
 
 # parse datetime columns
+
 time_cols = [
     "referral_at",
     "updated_at",
@@ -139,6 +141,30 @@ time_cols = [
 for col in time_cols:
     if col in referrals_df.columns:
         referrals_df[col] = pd.to_datetime(referrals_df[col], errors="coerce")
+# convert referral time to referrer local timezone 
+if "referrer_timezone" in referrals_df.columns and "referral_at" in referrals_df.columns:
+    if referrals_df["referral_at"].dt.tz is None:
+        referrals_df["referral_at_local"] = (
+            referrals_df["referral_at"]
+            .dt.tz_localize("UTC", nonexistent="NaT", ambiguous="NaT")
+            .dt.tz_convert(referrals_df["referrer_timezone"].iloc[0])
+        )
+    else:
+        referrals_df["referral_at_local"] = (
+            referrals_df["referral_at"]
+            .dt.tz_convert(referrals_df["referrer_timezone"].iloc[0])
+        )
+
+
+referrals_df["referral_source_category"] = np.where(
+    referrals_df["referral_source"] == "User Sign Up",
+    "Online",
+    np.where(
+        referrals_df["referral_source"] == "Draft Transaction",
+        "Offline",
+        referrals_df["source_category"]
+    )
+)
 
 print("Final shape after preprocessing:", referrals_df.shape)
 
