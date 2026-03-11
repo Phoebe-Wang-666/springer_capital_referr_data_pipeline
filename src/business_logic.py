@@ -47,7 +47,8 @@ df.loc[mask_reward_eligible, "is_reward_eligible"] = True
 
 
 # save final result
-df.to_csv("final_referral_results.csv", index=False)
+
+df.to_csv("output/final_referral_results.csv", index=False)
 
 print("Business logic processing completed.")
 print(df["is_valid_referral"].value_counts())

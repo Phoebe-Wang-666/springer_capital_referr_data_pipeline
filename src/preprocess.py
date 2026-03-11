@@ -168,9 +168,6 @@ referrals_df["referral_source_category"] = np.where(
 
 print("Final shape after preprocessing:", referrals_df.shape)
 
-referrals_df.to_csv(
-    "preprocessed_referrals.csv",
-    index=False
-)
+referrals_df.to_csv("output/preprocessed_referrals.csv", index=False)
 
 print("Preprocessing completed.")

@@ -46,7 +46,7 @@ for table_name, df in dfs.items():
 profiling_df = pd.DataFrame(profiling_rows)
 
 # save profiling output
-profiling_df.to_csv("profiling_summary.csv", index=False)
+profiling_df.to_csv("output/profiling_summary.csv", index=False)
 
 print("Data profiling completed.")
 print(profiling_df.head())
